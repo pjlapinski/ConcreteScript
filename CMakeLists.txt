@@ -4,10 +4,11 @@ project(ConcreteScript VERSION 0.0.1)
 set(CMAKE_C_STANDARD 23)
 
 set(CSI_PUBLIC_HEADERS
-        Interpreter/include/hello.h
+        Interpreter/include/lexer.h
+        Interpreter/include/config.h
 )
 set(CSI_SOURCES
-        Interpreter/src/hello.c
+        Interpreter/src/lexer.c
 )
 
 set(CSVS_SOURCES
