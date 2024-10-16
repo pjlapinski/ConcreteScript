@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <stddef.h>
 
 typedef enum {
     TOKEN_IDENTIFIER,
@@ -33,10 +33,13 @@ typedef enum {
     OPERATOR_NOT
 } Operator;
 
+typedef struct {
+    char *text;
+    size_t length;
+} String;
+
 typedef union {
-    int64_t intValue;
-    double floatValue;
-    const char* stringValue;
+    String stringValue;
     Operator operator;
 } TokenData;
 
@@ -45,4 +48,11 @@ typedef struct {
     TokenData data;
 } Token;
 
-void lex(const char *input, Token *outTokens);
+typedef struct {
+    Token *tokens;
+    size_t length;
+} TokenList;
+
+TokenList lex(const char *input);
+void freeTokens(TokenList tokens);
+void debugPrintTokens(TokenList tokens);
