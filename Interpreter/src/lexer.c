@@ -290,68 +290,20 @@ void printString(String str, size_t max_chars) {
 void debug_print_tokens(TokenList tokens) {
     for (size_t i = 0; i < tokens.length; ++i) {
         Token token = tokens.tokens[i];
-        if (token.type == TOKEN_IDENTIFIER) {
-            printf("TOKEN_IDENTIFIER[");
+        printf("%s",  token_names[token.type]);
+        if (token.type == TOKEN_OPERATOR) {
+            printf("[%s]\n", operator_names[token.data.operator]);
+        } else if (token.type == TOKEN_IDENTIFIER ||
+            token.type == TOKEN_STRING_LITERAL ||
+            token.type == TOKEN_CHAR_LITERAL ||
+            token.type == TOKEN_INT_LITERAL ||
+            token.type == TOKEN_FLOAT_LITERAL
+            ) {
+            printf("[");
             printString(token.data.string_value, 0);
             printf("]\n");
-        } else if (token.type == TOKEN_BRACKET_OPEN) {
-            printf("TOKEN_BRACKET_OPEN\n");
-        } else if (token.type == TOKEN_BRACKET_CLOSE) {
-            printf("TOKEN_BRACKET_CLOSE\n");
-        } else if (token.type == TOKEN_STRING_LITERAL) {
-            printf("TOKEN_STRING_LITERAL[");
-            printString(token.data.string_value, 10);
-            printf("]\n");
-        } else if (token.type == TOKEN_CHAR_LITERAL) {
-            printf("TOKEN_CHAR_LITERAL[");
-            printString(token.data.string_value, 0);
-            printf("]\n");
-        } else if (token.type == TOKEN_INT_LITERAL) {
-            printf("TOKEN_INT_LITERAL[");
-            printString(token.data.string_value, 0);
-            printf("]\n");
-        } else if (token.type == TOKEN_FLOAT_LITERAL) {
-            printf("TOKEN_FLOAT_LITERAL[");
-            printString(token.data.string_value, 0);
-            printf("]\n");
-        } else if (token.type == TOKEN_DOT) {
-            printf("TOKEN_DOT\n");
-        } else if (token.type == TOKEN_OPERATOR) {
-            printf("TOKEN_OPERATOR[");
-            if (token.data.operator == OPERATOR_PLUS) {
-                printf("OPERATOR_PLUS");
-            } else if (token.data.operator == OPERATOR_PLUS_EQ) {
-                printf("OPERATOR_PLUS_EQ");
-            } else if (token.data.operator == OPERATOR_MINUS) {
-                printf("OPERATOR_MINUS");
-            } else if (token.data.operator == OPERATOR_MINUS_EQ) {
-                printf("OPERATOR_MINUS_EQ");
-            } else if (token.data.operator == OPERATOR_MUL) {
-                printf("OPERATOR_MUL");
-            } else if (token.data.operator == OPERATOR_MUL_EQ) {
-                printf("OPERATOR_MUL_EQ");
-            } else if (token.data.operator == OPERATOR_DIV) {
-                printf("OPERATOR_DIV");
-            } else if (token.data.operator == OPERATOR_DIV_EQ) {
-                printf("OPERATOR_DIV_EQ");
-            } else if (token.data.operator == OPERATOR_ASSIGN) {
-                printf("OPERATOR_ASSIGN");
-            } else if (token.data.operator == OPERATOR_EQ) {
-                printf("OPERATOR_EQ");
-            } else if (token.data.operator == OPERATOR_NEQ) {
-                printf("OPERATOR_NEQ");
-            } else if (token.data.operator == OPERATOR_LT) {
-                printf("OPERATOR_LT");
-            } else if (token.data.operator == OPERATOR_GT) {
-                printf("OPERATOR_GT");
-            } else if (token.data.operator == OPERATOR_LE) {
-                printf("OPERATOR_LE");
-            } else if (token.data.operator == OPERATOR_GE) {
-                printf("OPERATOR_GE");
-            } else if (token.data.operator == OPERATOR_NOT) {
-                printf("OPERATOR_NOT");
-            }
-            printf("]\n");
+        } else {
+            printf("\n");
         }
     }
 }
