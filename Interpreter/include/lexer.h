@@ -39,7 +39,7 @@ typedef struct {
 } String;
 
 typedef union {
-    String stringValue;
+    String string_value;
     Operator operator;
 } TokenData;
 
@@ -54,5 +54,5 @@ typedef struct {
 } TokenList;
 
 TokenList lex(const char *input);
-void freeTokens(TokenList tokens);
-void debugPrintTokens(TokenList tokens);
+void free_tokens(TokenList tokens);
+void debug_print_tokens(TokenList tokens);

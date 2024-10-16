@@ -15,9 +15,9 @@ void pushToken(TokenList *list, size_t *cap, Token token) {
 }
 
 TokenList lex(const char *input) {
-    size_t listCapacity = 16;
+    size_t list_capacity = 16;
     TokenList tokens = {
-        .tokens = CSI_MALLOC(sizeof(Token) * listCapacity),
+        .tokens = CSI_MALLOC(sizeof(Token) * list_capacity),
         .length = 0
     };
 
@@ -32,7 +32,7 @@ TokenList lex(const char *input) {
 
         if (*it == '.') {
             Token token = { .type = TOKEN_DOT };
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             ++it;
             continue;
         }
@@ -59,12 +59,12 @@ TokenList lex(const char *input) {
             memcpy(str.text, it, end - it);
             if (dot) {
                 token.type = TOKEN_FLOAT_LITERAL;
-                token.data.stringValue = str;
+                token.data.string_value = str;
             } else {
                 token.type = TOKEN_INT_LITERAL;
-                token.data.stringValue = str;
+                token.data.string_value = str;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             it = end;
             continue;
         }
@@ -79,7 +79,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_PLUS;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -93,7 +93,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_MINUS;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -107,7 +107,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_MUL;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -121,7 +121,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_DIV;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -135,7 +135,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_ASSIGN;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -149,7 +149,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_NOT;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -163,7 +163,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_GT;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -177,7 +177,7 @@ TokenList lex(const char *input) {
             } else {
                 token.data.operator = OPERATOR_LT;
             }
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             continue;
         }
 
@@ -199,8 +199,8 @@ TokenList lex(const char *input) {
             };
             memcpy(str.text, it, end - it);
             str.length = end - it;
-            token.data.stringValue = str;
-            pushToken(&tokens, &listCapacity, token);
+            token.data.string_value = str;
+            pushToken(&tokens, &list_capacity, token);
             it = end + 1;
         }
 
@@ -222,21 +222,21 @@ TokenList lex(const char *input) {
             };
             memcpy(str.text, it, end - it);
             str.length = end - it;
-            token.data.stringValue = str;
-            pushToken(&tokens, &listCapacity, token);
+            token.data.string_value = str;
+            pushToken(&tokens, &list_capacity, token);
             it = end + 1;
         }
 
         if (*it == '(') {
             Token token = { .type = TOKEN_BRACKET_OPEN };
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             ++it;
             continue;
         }
 
         if (*it == ')') {
             Token token = { .type = TOKEN_BRACKET_OPEN };
-            pushToken(&tokens, &listCapacity, token);
+            pushToken(&tokens, &list_capacity, token);
             ++it;
             continue;
         }
@@ -254,8 +254,8 @@ TokenList lex(const char *input) {
                 .length = end - it,
             };
             memcpy(str.text, it, end - it);
-            token.data.stringValue = str;
-            pushToken(&tokens, &listCapacity, token);
+            token.data.string_value = str;
+            pushToken(&tokens, &list_capacity, token);
             it = end;
             continue;
         }
@@ -263,23 +263,23 @@ TokenList lex(const char *input) {
     return tokens;
 }
 
-void freeTokens(TokenList tokens) {
+void free_tokens(TokenList tokens) {
     for (size_t i = 0; i < tokens.length; ++i) {
         if (tokens.tokens[i].type == TOKEN_IDENTIFIER ||
             tokens.tokens[i].type == TOKEN_STRING_LITERAL ||
             tokens.tokens[i].type == TOKEN_CHAR_LITERAL ||
             tokens.tokens[i].type == TOKEN_INT_LITERAL ||
             tokens.tokens[i].type == TOKEN_FLOAT_LITERAL) {
-            CSI_FREE(tokens.tokens[i].data.stringValue.text);
+            CSI_FREE(tokens.tokens[i].data.string_value.text);
         }
     }
     CSI_FREE(tokens.tokens);
     tokens.length = 0;
 }
 
-void printString(String str, size_t maxChars) {
+void printString(String str, size_t max_chars) {
     for (int i = 0; i < str.length; ++i) {
-        if (maxChars != 0 && i >= maxChars) {
+        if (max_chars != 0 && i >= max_chars) {
             printf("...");
             return;
         }
@@ -287,12 +287,12 @@ void printString(String str, size_t maxChars) {
     }
 }
 
-void debugPrintTokens(TokenList tokens) {
+void debug_print_tokens(TokenList tokens) {
     for (size_t i = 0; i < tokens.length; ++i) {
         Token token = tokens.tokens[i];
         if (token.type == TOKEN_IDENTIFIER) {
             printf("TOKEN_IDENTIFIER[");
-            printString(token.data.stringValue, 0);
+            printString(token.data.string_value, 0);
             printf("]\n");
         } else if (token.type == TOKEN_BRACKET_OPEN) {
             printf("TOKEN_BRACKET_OPEN\n");
@@ -300,19 +300,19 @@ void debugPrintTokens(TokenList tokens) {
             printf("TOKEN_BRACKET_CLOSE\n");
         } else if (token.type == TOKEN_STRING_LITERAL) {
             printf("TOKEN_STRING_LITERAL[");
-            printString(token.data.stringValue, 10);
+            printString(token.data.string_value, 10);
             printf("]\n");
         } else if (token.type == TOKEN_CHAR_LITERAL) {
             printf("TOKEN_CHAR_LITERAL[");
-            printString(token.data.stringValue, 0);
+            printString(token.data.string_value, 0);
             printf("]\n");
         } else if (token.type == TOKEN_INT_LITERAL) {
             printf("TOKEN_INT_LITERAL[");
-            printString(token.data.stringValue, 0);
+            printString(token.data.string_value, 0);
             printf("]\n");
         } else if (token.type == TOKEN_FLOAT_LITERAL) {
             printf("TOKEN_FLOAT_LITERAL[");
-            printString(token.data.stringValue, 0);
+            printString(token.data.string_value, 0);
             printf("]\n");
         } else if (token.type == TOKEN_DOT) {
             printf("TOKEN_DOT\n");
