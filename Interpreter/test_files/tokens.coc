@@ -1,0 +1,33 @@
++; plus
++=; plus eq
+-; minus
+-=; minus eq
+*; mul
+*=; mul eq
+/; div
+/=; div eq
+=; assign
+==; eq
+!=; neq
+>; gt
+>=; ge
+<; lt
+<=; le
+!; not
+var; identifier
+var_x; identifier
+varY; identifier
+_var; identifier
+_; identifier
+fn; keyword
+not; keyword
+and; keyword
+or; keyword
+(); brackets
+{}; curly braces
+[]; square brackets
+"hello world"; string
+'a'; char
+2137; int
+21.37; float
+21.; int and dot
