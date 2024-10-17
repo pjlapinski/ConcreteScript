@@ -1,10 +1,9 @@
 #include "lexer.h"
+#include "config.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "config.h"
 
 void pushToken(TokenList *list, size_t *cap, Token token) {
     if (list->length >= *cap) {
@@ -22,16 +21,22 @@ TokenList lex(const char *input) {
     };
 
     const char *it = input;
+    size_t col = 0, row = 0;
     while (it && *it != '\0') {
         if (*it == '\0') break;
 
         if (isspace(*it)) {
+            ++col;
+            if (*it == '\n') {
+                col = 0;
+                ++row;
+            }
             ++it;
             continue;
         }
 
         if (*it == '.') {
-            Token token = { .type = TOKEN_DOT };
+            Token token = { .type = TOKEN_DOT, .col = col++, .row = row };
             pushToken(&tokens, &list_capacity, token);
             ++it;
             continue;
@@ -64,6 +69,9 @@ TokenList lex(const char *input) {
                 token.type = TOKEN_INT_LITERAL;
                 token.data.string_value = str;
             }
+            token.col = col;
+            token.row = row;
+            col += str.length;
             pushToken(&tokens, &list_capacity, token);
             it = end;
             continue;
@@ -72,10 +80,13 @@ TokenList lex(const char *input) {
         if (*it == '+') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_PLUS_EQ;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_PLUS;
             }
@@ -86,10 +97,13 @@ TokenList lex(const char *input) {
         if (*it == '-') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_MINUS_EQ;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_MINUS;
             }
@@ -100,10 +114,13 @@ TokenList lex(const char *input) {
         if (*it == '*') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_MUL_EQ;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_MUL;
             }
@@ -114,10 +131,13 @@ TokenList lex(const char *input) {
         if (*it == '/') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_DIV_EQ;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_DIV;
             }
@@ -128,10 +148,13 @@ TokenList lex(const char *input) {
         if (*it == '=') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_EQ;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_ASSIGN;
             }
@@ -142,10 +165,13 @@ TokenList lex(const char *input) {
         if (*it == '!') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_NEQ;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_NOT;
             }
@@ -156,10 +182,13 @@ TokenList lex(const char *input) {
         if (*it == '>') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_GE;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_GT;
             }
@@ -170,10 +199,13 @@ TokenList lex(const char *input) {
         if (*it == '<') {
             Token token;
             token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
             ++it;
             if (*it == '=') {
                 token.data.operator = OPERATOR_LE;
                 ++it;
+                ++col;
             } else {
                 token.data.operator = OPERATOR_LT;
             }
@@ -200,7 +232,10 @@ TokenList lex(const char *input) {
             memcpy(str.text, it, end - it);
             str.length = end - it;
             token.data.string_value = str;
+            token.col = col;
+            token.row = row;
             pushToken(&tokens, &list_capacity, token);
+            col += str.length + 2;
             it = end + 1;
         }
 
@@ -223,19 +258,22 @@ TokenList lex(const char *input) {
             memcpy(str.text, it, end - it);
             str.length = end - it;
             token.data.string_value = str;
+            token.col = col;
+            token.row = row;
             pushToken(&tokens, &list_capacity, token);
+            col += str.length + 2;
             it = end + 1;
         }
 
         if (*it == '(') {
-            Token token = { .type = TOKEN_BRACKET_OPEN };
+            Token token = { .type = TOKEN_BRACKET_OPEN, .col = col++, .row = row };
             pushToken(&tokens, &list_capacity, token);
             ++it;
             continue;
         }
 
         if (*it == ')') {
-            Token token = { .type = TOKEN_BRACKET_OPEN };
+            Token token = { .type = TOKEN_BRACKET_CLOSE, .col = col++, .row = row };
             pushToken(&tokens, &list_capacity, token);
             ++it;
             continue;
@@ -255,7 +293,10 @@ TokenList lex(const char *input) {
             };
             memcpy(str.text, it, end - it);
             token.data.string_value = str;
+            token.col = col;
+            token.row = row;
             pushToken(&tokens, &list_capacity, token);
+            col += str.length;
             it = end;
             continue;
         }
@@ -277,7 +318,7 @@ void free_tokens(TokenList tokens) {
     tokens.length = 0;
 }
 
-void printString(String str, size_t max_chars) {
+void print_string(String str, size_t max_chars) {
     for (int i = 0; i < str.length; ++i) {
         if (max_chars != 0 && i >= max_chars) {
             printf("...");
@@ -290,7 +331,7 @@ void printString(String str, size_t max_chars) {
 void debug_print_tokens(TokenList tokens) {
     for (size_t i = 0; i < tokens.length; ++i) {
         Token token = tokens.tokens[i];
-        printf("%s",  token_names[token.type]);
+        printf("%llu:%llu - %s", token.row, token.col, token_names[token.type]);
         if (token.type == TOKEN_OPERATOR) {
             printf("[%s]\n", operator_names[token.data.operator]);
         } else if (token.type == TOKEN_IDENTIFIER ||
@@ -300,10 +341,27 @@ void debug_print_tokens(TokenList tokens) {
             token.type == TOKEN_FLOAT_LITERAL
             ) {
             printf("[");
-            printString(token.data.string_value, 0);
+            print_string(token.data.string_value, 0);
             printf("]\n");
         } else {
             printf("\n");
         }
     }
+}
+
+bool streq(String *a, String *b) {
+    if (a->length != b->length) {
+        return false;
+    }
+    for (size_t i = 0; i < a->length; ++i) {
+        if (a->text[i] != b->text[i]) {
+        return false;
+        }
+    }
+    return true;
+}
+
+bool streqc(String *a, const char *b) {
+    String s = { .text = (char *)b, .length = strlen(b) };
+    return streq(a, &s);
 }

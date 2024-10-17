@@ -85,6 +85,7 @@ typedef union {
 typedef struct {
     TokenType type;
     TokenData data;
+    size_t col, row;
 } Token;
 
 typedef struct {
@@ -92,6 +93,8 @@ typedef struct {
     size_t length;
 } TokenList;
 
-TokenList lex(const char *input);
-void free_tokens(TokenList tokens);
-void debug_print_tokens(TokenList tokens);
+TokenList lex(const char *);
+void free_tokens(TokenList);
+void debug_print_tokens(TokenList);
+bool streq(String *, String *);
+bool streqc(String *, const char *);
