@@ -76,7 +76,16 @@ typedef enum {
     OPERATOR_GT,
     OPERATOR_LE,
     OPERATOR_GE,
-    OPERATOR_NOT,
+    OPERATOR_XOR,
+    OPERATOR_OR,
+    OPERATOR_AND,
+    OPERATOR_XOREQ,
+    OPERATOR_OREQ,
+    OPERATOR_ANDEQ,
+    OPERATOR_SHIFTL,
+    OPERATOR_SHIFTR,
+    OPERATOR_SHIFTLEQ,
+    OPERATOR_SHIFTREQ,
 
     OPERATOR__MAX
 } Operator;
@@ -97,7 +106,16 @@ static const char *const operator_names[] = {
     [OPERATOR_GT] = "OPERATOR_GT",
     [OPERATOR_LE] = "OPERATOR_LE",
     [OPERATOR_GE] = "OPERATOR_GE",
-    [OPERATOR_NOT] = "OPERATOR_NOT"
+    [OPERATOR_XOR] = "OPERATOR_XOR",
+    [OPERATOR_OR] = "OPERATOR_OR",
+    [OPERATOR_AND] = "OPERATOR_AND",
+    [OPERATOR_XOREQ] = "OPERATOR_XOREQ",
+    [OPERATOR_OREQ] = "OPERATOR_OREQ",
+    [OPERATOR_ANDEQ] = "OPERATOR_ANDEQ",
+    [OPERATOR_SHIFTL] = "OPERATOR_SHIFTL",
+    [OPERATOR_SHIFTR] = "OPERATOR_SHIFTR",
+    [OPERATOR_SHIFTLEQ] = "OPERATOR_SHIFTLEQ",
+    [OPERATOR_SHIFTREQ] = "OPERATOR_SHIFTREQ"
 };
 static_assert(sizeof(operator_names) / sizeof(operator_names[0]) == OPERATOR__MAX,
     "Operator enum and operator_names list lengths are not equal");

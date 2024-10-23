@@ -190,7 +190,8 @@ TokenList lex(const char *input) {
                 ++it;
                 ++col;
             } else {
-                token.data.operator = OPERATOR_NOT;
+                // TODO: report error, '!' doesn't mean anything
+                break;
             }
             push_token(&tokens, &list_capacity, token);
             continue;
@@ -206,6 +207,15 @@ TokenList lex(const char *input) {
                 token.data.operator = OPERATOR_GE;
                 ++it;
                 ++col;
+            } else if (*it == '>') {
+                token.data.operator = OPERATOR_SHIFTR;
+                ++it;
+                ++col;
+                if (*it == '=') {
+                    token.data.operator = OPERATOR_SHIFTREQ;
+                    ++it;
+                    ++col;
+                }
             } else {
                 token.data.operator = OPERATOR_GT;
             }
@@ -223,8 +233,68 @@ TokenList lex(const char *input) {
                 token.data.operator = OPERATOR_LE;
                 ++it;
                 ++col;
+            } else if (*it == '<') {
+                token.data.operator = OPERATOR_SHIFTL;
+                ++it;
+                ++col;
+                if (*it == '=') {
+                    token.data.operator = OPERATOR_SHIFTLEQ;
+                    ++it;
+                    ++col;
+                }
             } else {
                 token.data.operator = OPERATOR_LT;
+            }
+            push_token(&tokens, &list_capacity, token);
+            continue;
+        }
+
+        if (*it == '^') {
+            Token token;
+            token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
+            ++it;
+            if (*it == '=') {
+                token.data.operator = OPERATOR_XOREQ;
+                ++it;
+                ++col;
+            } else {
+                token.data.operator = OPERATOR_XOR;
+            }
+            push_token(&tokens, &list_capacity, token);
+            continue;
+        }
+
+        if (*it == '|') {
+            Token token;
+            token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
+            ++it;
+            if (*it == '=') {
+                token.data.operator = OPERATOR_OREQ;
+                ++it;
+                ++col;
+            } else {
+                token.data.operator = OPERATOR_OR;
+            }
+            push_token(&tokens, &list_capacity, token);
+            continue;
+        }
+
+        if (*it == '&') {
+            Token token;
+            token.type = TOKEN_OPERATOR;
+            token.col = col++;
+            token.row = row;
+            ++it;
+            if (*it == '=') {
+                token.data.operator = OPERATOR_ANDEQ;
+                ++it;
+                ++col;
+            } else {
+                token.data.operator = OPERATOR_AND;
             }
             push_token(&tokens, &list_capacity, token);
             continue;
@@ -239,7 +309,7 @@ TokenList lex(const char *input) {
                 ++end;
             }
             if (!end || *end != '\'') {
-                // TODO: report error
+                // TODO: report error, invalid literal
                 break;
             }
             String str = {
@@ -266,7 +336,7 @@ TokenList lex(const char *input) {
                 ++end;
             }
             if (!end || *end != '"') {
-                // TODO: report error
+                // TODO: report error, invalid literal
                 break;
             }
             String str = {
@@ -358,7 +428,7 @@ TokenList lex(const char *input) {
             continue;
         }
 
-        fprintf(stderr, "Unknown identifier at [%llu:%llu]:\n", row, col);
+        fprintf(stderr, "Unknown identifier at [%zu:%zu]:\n", row, col);
         err_print_until_new_line(it);
         free_tokens(&tokens);
         return tokens;
@@ -396,7 +466,7 @@ void print_string(String str, size_t max_chars) {
 void debug_print_tokens(TokenList tokens) {
     for (size_t i = 0; i < tokens.length; ++i) {
         Token token = tokens.tokens[i];
-        printf("%llu:%llu - %s", token.row, token.col, token_names[token.type]);
+        printf("%zu:%zu - %s", token.row, token.col, token_names[token.type]);
         if (token.type == TOKEN_OPERATOR) {
             printf("[%s]\n", operator_names[token.data.operator]);
         } else if (token.type == TOKEN_KEYWORD) {

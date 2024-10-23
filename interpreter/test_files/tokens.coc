@@ -13,7 +13,6 @@
 >=; ge
 <; lt
 <=; le
-!; not
 var; identifier
 var_x; identifier
 varY; identifier
@@ -31,3 +30,13 @@ or; keyword
 2137; int
 21.37; float
 21.; int and dot
+^; xor
+|; or
+&; and
+^=; xoreq
+|=; oreq
+&=; andeq
+<<; shitftl
+>>; shitftr
+<<=; shitftleq
+>>=; shitftreq
